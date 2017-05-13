@@ -1,7 +1,7 @@
-import System.IO 
 import Control.Monad
-import qualified Data.Map as Map
 import Data.IORef
+import Data.Map (Map)         
+import qualified Data.Map as Map
 
 import Text.Parsec
 

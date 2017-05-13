@@ -1,19 +1,20 @@
-{-# LANGUAGE DeriveDataTypeable #-}
-
 module Expr where
 
-import Data.Data
+import Data.Map (Map)
+
+type Context = Map String Expr
 
 data Expr = LispInteger Integer |
             LispBoolean Bool |
             LispString String |
+            LispFunction (Context -> [Expr] -> (Context, Expr)) |
             LispSymbol String |
             LispList [Expr]
-            deriving (Data,Typeable)
 
 instance Show Expr where
     show (LispInteger val) = show val
-    show (LispBoolean val) = if val then "True" else "False"
+    show (LispBoolean val) = if val then "true" else "false"
     show (LispString val) = "\"" ++ val ++ "\""
+    show (LispFunction _) = "[function]"
     show (LispSymbol val) = val
     show (LispList val) = "(" ++ unwords (map show val) ++ ")"

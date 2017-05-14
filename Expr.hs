@@ -4,9 +4,10 @@ import Data.Map (Map)
 
 type Context = Map String Expr
 
-data Expr = LispInteger Integer |
+data Expr = LispFloat Double |
+            LispInteger Integer |
             LispBoolean Bool |
-            LispString String |
+            LispChar Char |
             LispFunction (Context -> [Expr] -> (Context, Expr)) |
             LispSymbol String |
             LispConsList [Expr] |
@@ -15,9 +16,10 @@ data Expr = LispInteger Integer |
             LispList [Expr]
 
 instance Show Expr where
+    show (LispFloat val) = show val
     show (LispInteger val) = show val
     show (LispBoolean val) = if val then "true" else "false"
-    show (LispString val) = "\"" ++ val ++ "\""
+    show (LispChar val) = show val
     show (LispFunction _) = "[function]"
     show (LispSymbol val) = val
     show (LispConsList val) = "[" ++ unwords (map show val) ++ "]"

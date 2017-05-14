@@ -127,6 +127,12 @@ lispListLength ctx args
     where argsNum = length args
           eval_args = map (snd . eval ctx) args
 
+lispQuote :: Context -> [Expr] -> (Context, Expr)
+lispQuote ctx args
+    | argsNum /= 1 = error $ "'quote' expected 1 arguemnt, but got " ++ show argsNum
+    | otherwise = (ctx, args !! 0)
+    where argsNum = length args
+
 builtInMap :: Map String (Context -> [Expr] -> (Context, Expr))
 builtInMap = Map.fromList [("+", lispNumAdd), 
                            ("-", lispNumSub), 
@@ -144,7 +150,8 @@ builtInMap = Map.fromList [("+", lispNumAdd),
                            ("head", lispHead),
                            ("tail", lispTail),
                            ("++", lispPrepend),
-                           ("length", lispListLength)]
+                           ("length", lispListLength),
+                           ("quote", lispQuote)]
 
 eval :: Context -> Expr -> (Context, Expr)
 eval ctx val@(LispFloat _) = (ctx, val)
@@ -154,7 +161,7 @@ eval ctx val@(LispChar _) = (ctx, val)
 eval ctx val@(LispFunction _) = (ctx, val)
 eval ctx val@(LispSymbol symbol) = (ctx, case (Map.lookup symbol ctx) of 
                                             Just v -> v
-                                            Nothing -> val)
+                                            Nothing -> error $ "unbound symbol '" ++ show val ++ "'")
 
 eval ctx (LispConsList lst) = (ctx, LispConsList $ map (snd . eval ctx) lst)
 eval ctx (LispRangeList begin end) 

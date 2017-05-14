@@ -1,6 +1,5 @@
 import Control.Monad
-import Data.IORef
-import Data.Map (Map)         
+import Data.IORef        
 import qualified Data.Map as Map
 
 import Text.Parsec
@@ -24,8 +23,9 @@ repl = do
                 putStr "hslisp> "
                 line <- getLine
                 ctx <- readIORef ctxRef
-                print $ snd $ re line ctx
-                writeIORef ctxRef (fst $ re line ctx)
+                let val = re line ctx
+                print $ snd val
+                writeIORef ctxRef (fst val)
 
                 when (line /= "quit") loop     
             loop

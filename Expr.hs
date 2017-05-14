@@ -9,6 +9,9 @@ data Expr = LispInteger Integer |
             LispString String |
             LispFunction (Context -> [Expr] -> (Context, Expr)) |
             LispSymbol String |
+            LispConsList [Expr] |
+            LispRangeList Expr Expr |
+            LispRangeList2 Expr Expr Expr |
             LispList [Expr]
 
 instance Show Expr where
@@ -17,4 +20,6 @@ instance Show Expr where
     show (LispString val) = "\"" ++ val ++ "\""
     show (LispFunction _) = "[function]"
     show (LispSymbol val) = val
+    show (LispConsList val) = "[" ++ unwords (map show val) ++ "]"
     show (LispList val) = "(" ++ unwords (map show val) ++ ")"
+    show _ = "[undefined]"

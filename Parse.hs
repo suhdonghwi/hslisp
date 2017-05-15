@@ -8,7 +8,8 @@ parseExpr :: Parser Expr
 parseExpr = try parseFloat <|>
             try parseInteger <|> 
             try parseBoolean <|> 
-            parseChar <|> 
+            try parseChar <|> 
+            parseQuote <|>
             parseString <|>
             parseSymbol <|> 
             try parseConsList <|> 
@@ -38,11 +39,42 @@ parseChar = do _ <- char '\''
                _ <- char '\''
                return $ LispChar ch
 
+parseQuote :: Parser Expr
+parseQuote = do _ <- char '\''
+                expr <- parseExpr
+                return $ LispList [LispSymbol "quote", expr]
+
+escape :: Parser String
+escape = do
+    d <- char '\\'
+    c <- oneOf "\\\"0nrvtbf" -- all the characters which can be escaped
+    return [d, c]
+
+nonEscape :: Parser Char
+nonEscape = noneOf "\\\"\0\n\r\v\t\b\f"
+
+character :: Parser String
+character = fmap return nonEscape <|> escape
+
+getEscape :: Char -> Char
+getEscape ch = case ch of 
+                '\"' -> '\"'
+                '0' -> '\0'
+                'n' -> '\n'
+                'r' -> '\r'
+                'v' -> '\v'
+                't' -> '\t'
+                'b' -> '\b'
+                'f' -> '\f'
+
+transEscape :: String -> Char
+transEscape str = if head str == '\\' then getEscape (str !! 1) else head str
+
 parseString :: Parser Expr
 parseString = do _ <- char '"'
-                 str <- many (noneOf "\"")
+                 str <- many character
                  _ <- char '"'
-                 return $ LispConsList $ map LispChar str
+                 return $ LispConsList $ map (LispChar . transEscape) str
 
 parseSymbol :: Parser Expr
 parseSymbol = do first <- firstChar
@@ -83,3 +115,7 @@ parseList = do _ <- char '('
                lst <- sepBy parseExpr spaces
                _ <- char ')'
                return $ LispList lst
+
+parseExprs :: Parser Expr
+parseExprs = do exprs <- sepEndBy parseExpr spaces
+                return $ LispDo exprs

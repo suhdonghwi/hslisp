@@ -3,27 +3,22 @@ import Data.IORef
 import qualified Data.Map as Map
 import System.Exit
 import System.Environment
-import qualified Control.Exception as Exc
+import System.IO.Unsafe
 
 import Text.Parsec
 
 import Expr
 import Parse
 import Eval
+import ExprTypeCheck
 
 readExpr :: String -> Expr
-readExpr input = case parse parseExpr "hslisp" input of
-    Left err -> LispSymbol $ "No match: " ++ show err
+readExpr input = case parse parseExprs "hslisp" input of
+    Left err -> LispSymbol $ "\nNo match: " ++ show err
     Right val -> val
 
 re :: String -> Context -> (Context, Expr) -- Read, Eval
 re str ctx = eval ctx (readExpr str)
-
-wordsWhen     :: (Char -> Bool) -> String -> [String]
-wordsWhen p s =  case dropWhile p s of
-                      "" -> []
-                      s' -> w : wordsWhen p s''
-                            where (w, s'') = break p s'
 
 repl :: IO() -- Read, Eval, Print, Loop
 repl = do
@@ -43,11 +38,8 @@ repl = do
 main :: IO()
 main = do args <- getArgs
           case args of
-            --   [filename] -> do content <- readFile filename
-            --                    --  let splitedContent = wordsWhen (== '\n') content 
-            --                    Exc.catch (return $ re content Map.empty) handler
-            --                    -- _ <- return $ map (`re` Map.empty) splitedContent
-            --                    return ()
-            --                 where handler :: Exc.ErrorCall -> IO()
-            --                       handler _ = putStrLn "what the fuck"
+              [filename] -> do content <- readFile filename
+                               let val = re content Map.empty
+                               when (isErrorExpr $ snd val) (print $ snd val)
+                               return ()
               [] -> repl

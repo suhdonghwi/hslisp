@@ -33,3 +33,7 @@ isConsListExpr _ = False
 isListExpr :: Expr -> Bool
 isListExpr (LispList _) = True
 isListExpr _ = False
+
+isErrorExpr :: Expr -> Bool
+isErrorExpr (LispError _) = True
+isErrorExpr _ = False

@@ -13,7 +13,9 @@ data Expr = LispFloat Double |
             LispConsList [Expr] |
             LispRangeList Expr Expr |
             LispRangeList2 Expr Expr Expr |
-            LispList [Expr]
+            LispList [Expr] |
+            LispError String |
+            LispDo [Expr]
 
 instance Show Expr where
     show (LispFloat val) = show val
@@ -24,4 +26,5 @@ instance Show Expr where
     show (LispSymbol val) = val
     show (LispConsList val) = "[" ++ unwords (map show val) ++ "]"
     show (LispList val) = "(" ++ unwords (map show val) ++ ")"
+    show (LispError val) = "Error : " ++ val
     show _ = "[undefined]"

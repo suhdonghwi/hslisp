@@ -112,7 +112,7 @@ parseRangeList2 = do _ <- char '['
 
 parseList :: Parser Expr
 parseList = do _ <- char '('
-               lst <- sepBy parseExpr spaces
+               lst <- sepEndBy parseExpr spaces
                _ <- char ')'
                return $ LispList lst
 

@@ -1,0 +1,34 @@
+(defun map (f lst) (if (= (length lst) 0) [] (++ [(f (head lst))] (map f (tail lst)))))
+
+(defun filter (f lst) (if (= (length lst) 0) [] (if (f (head lst)) (++ [(head lst)] (filter f (tail lst))) (filter f (tail lst))))) 
+
+(defun empty? (lst) (= (length lst) 0))
+
+(defun foldr (f v lst) (if (empty? lst) 
+                            v 
+                            (f (head lst) (foldr f v (tail lst)))
+                       ))
+
+(defun reverse (lst) (foldr (lambda (head tail) (++ tail [head])) [] lst))
+
+(defun sum (lst) (if (empty? lst)
+                     0
+                     (+ (head lst) (sum (tail lst)))))
+
+(defun member? (v lst) (if (empty? lst)
+                           false
+                           (if (= v (head lst))
+                               true
+                               (member? v (tail lst)))))
+
+(defun common (lst1 lst2) (if (empty? lst1)
+                             []
+                             (if (member? (head lst1) lst2)
+                                 (++ [(head lst1)] (common (tail lst1) lst2))
+                                 (union (tail lst1) lst2))))
+
+(defun unique (lst) (if (empty? lst)
+                        []
+                        (if (member? (head lst) (tail lst))
+                            (unique (tail lst))
+                            (++ [(head lst)] (unique (tail lst))))))

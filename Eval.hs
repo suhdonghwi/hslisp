@@ -5,7 +5,6 @@ import qualified Data.Map as Map
 import Data.List
 import Data.Fixed
 import Data.Maybe
-import System.IO.Unsafe
 
 import Expr
 import Unpack
@@ -141,30 +140,6 @@ lispEval ctx args
     | otherwise = eval ctx (unpackList (head args) !! 1)
     where argsNum = length args
 
-lispPrint :: Context -> [Expr] -> (Context, Expr)
-lispPrint ctx args
-    | argsNum /= 1 = (ctx, LispError $ "'print' expected 1 arguemnt, but got " ++ show argsNum)
-    | otherwise = unsafePerformIO $ do print $ head eval_args -- Ok, I agree. Sorry about that.
-                                       return (ctx, head eval_args)
-    where argsNum = length args
-          eval_args = map (snd . eval ctx) args
-
-lispPutStr :: Context -> [Expr] -> (Context, Expr)
-lispPutStr ctx args
-    | argsNum /= 1 = (ctx, LispError $ "'putStr' expected 1 arguemnt, but got " ++ show argsNum)
-    | otherwise = unsafePerformIO $ do putStr $ map unpackChar (unpackConsList $ head eval_args)
-                                       return (ctx, head eval_args)
-    where argsNum = length args
-          eval_args = map (snd . eval ctx) args
-
-lispPutStrLn :: Context -> [Expr] -> (Context, Expr)
-lispPutStrLn ctx args
-    | argsNum /= 1 = (ctx, LispError $ "'putStrLn' expected 1 arguemnt, but got " ++ show argsNum)
-    | otherwise = unsafePerformIO $ do putStrLn $ map unpackChar (unpackConsList $ head eval_args)
-                                       return (ctx, head eval_args)
-    where argsNum = length args
-          eval_args = map (snd . eval ctx) args
-
 builtInMap :: Map String (Context -> [Expr] -> (Context, Expr))
 builtInMap = Map.fromList [("+", lispNumAdd), 
                            ("-", lispNumSub), 
@@ -184,10 +159,7 @@ builtInMap = Map.fromList [("+", lispNumAdd),
                            ("++", lispPrepend),
                            ("length", lispListLength),
                            ("quote", lispQuote),
-                           ("eval", lispEval),
-                           ("print", lispPrint),
-                           ("putStr", lispPutStr),
-                           ("putStrLn", lispPutStrLn)]
+                           ("eval", lispEval)]
 
 eval :: Context -> Expr -> (Context, Expr)
 eval ctx val@(LispFloat _) = (ctx, val)
@@ -221,7 +193,7 @@ eval ctx (LispList (LispSymbol func : args)) = case Map.lookup func builtInMap o
 eval ctx (LispList (LispList func : args)) = (unpackFunc $ snd $ eval ctx (LispList func)) ctx args
 
 eval ctx (LispDo [expr]) = eval ctx expr
-eval ctx (LispDo (expr : exprs)) = let ctx2 = fst $ eval ctx expr
-                                   in eval ctx2 (LispDo exprs)               
+eval ctx (LispDo (expr : exprs)) = let val = eval ctx expr
+                                   in if isErrorExpr (snd val) then (ctx, snd val) else eval (fst val) (LispDo exprs)               
 
-eval ctx _ = (ctx, LispError "Undefined eval function")
+eval ctx _ = (ctx, LispError "undefined eval function")

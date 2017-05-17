@@ -137,11 +137,18 @@ lispQuote ctx args
 lispEval :: Context -> [Expr] -> (Context, Expr)
 lispEval ctx args
     | argsNum /= 1 = (ctx, LispError $ "'eval' expected 1 arguemnt, but got " ++ show argsNum)
-    | otherwise = eval ctx (unpackList (head args) !! 1)
+    | otherwise = eval ctx (head eval_args)
     where argsNum = length args
+          eval_args = map (snd . eval ctx) args
 
-builtInMap :: Map String (Context -> [Expr] -> (Context, Expr))
-builtInMap = Map.fromList [("+", lispNumAdd), 
+lispLet :: Context -> Context -> [Expr] -> (Context, Expr)
+lispLet initCtx ctx [arg] = (initCtx, snd $ eval ctx arg)
+lispLet initCtx ctx (arg:args) = lispLet initCtx (Map.insert sym val ctx) args
+    where sym = unpackSymbol $ head $ unpackList arg
+          val = snd $ eval ctx (unpackList arg !! 1)
+
+builtInMap :: Context -> Map String (Context -> [Expr] -> (Context, Expr))
+builtInMap ctx = Map.fromList [("+", lispNumAdd), 
                            ("-", lispNumSub), 
                            ("*", lispNumMul), 
                            ("/", lispNumDiv), 
@@ -159,7 +166,8 @@ builtInMap = Map.fromList [("+", lispNumAdd),
                            ("++", lispPrepend),
                            ("length", lispListLength),
                            ("quote", lispQuote),
-                           ("eval", lispEval)]
+                           ("eval", lispEval),
+                           ("let", lispLet ctx)]
 
 eval :: Context -> Expr -> (Context, Expr)
 eval ctx val@(LispFloat _) = (ctx, val)
@@ -187,7 +195,22 @@ eval ctx (LispRangeList2 begin begin2 end)
           eval_begin2 = snd $ eval ctx begin2
           eval_end = snd $ eval ctx end
 
-eval ctx (LispList (LispSymbol func : args)) = case Map.lookup func builtInMap of 
+eval ctx (LispInfRangeList begin) 
+    | isFloatExpr eval_begin = (ctx, LispConsList (map LispFloat [(unpackFloat eval_begin) ..]))    
+    | isIntegerExpr eval_begin = (ctx, LispConsList (map LispInteger [(unpackInteger eval_begin) ..]))
+    | isCharExpr eval_begin = (ctx, LispConsList (map LispChar [(unpackChar eval_begin) ..]))
+    | otherwise = (ctx, LispError "range list is not defined for the type")
+    where eval_begin = snd $ eval ctx begin
+
+eval ctx (LispInfRangeList2 begin begin2) 
+    | isFloatExpr eval_begin = (ctx, LispConsList (map LispFloat [(unpackFloat eval_begin), (unpackFloat eval_begin2) ..]))    
+    | isIntegerExpr eval_begin = (ctx, LispConsList (map LispInteger [(unpackInteger eval_begin), (unpackInteger eval_begin2) ..]))
+    | isCharExpr eval_begin = (ctx, LispConsList (map LispChar [(unpackChar eval_begin), (unpackChar eval_begin2) ..]))
+    | otherwise = (ctx, LispError "range list is not defined for the type")
+    where eval_begin = snd $ eval ctx begin
+          eval_begin2 = snd $ eval ctx begin2
+
+eval ctx (LispList (LispSymbol func : args)) = case Map.lookup func (builtInMap ctx) of 
                                                     Nothing -> (unpackFunc $ snd $ eval ctx (LispSymbol func)) ctx (map (snd . eval ctx) args)
                                                     Just lispfunc -> lispfunc ctx args
 eval ctx (LispList (LispList func : args)) = (unpackFunc $ snd $ eval ctx (LispList func)) ctx args

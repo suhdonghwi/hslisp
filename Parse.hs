@@ -15,6 +15,8 @@ parseExpr = try parseFloat <|>
             try parseConsList <|> 
             try parseRangeList <|>
             try parseRangeList2 <|>
+            try parseInfRangeList <|>
+            try parseInfRangeList2 <|>            
             parseList
 
 parseFloat :: Parser Expr
@@ -109,6 +111,26 @@ parseRangeList2 = do _ <- char '['
                      end <- parseExpr
                      _ <- char ']'
                      return $ LispRangeList2 begin begin2 end
+
+parseInfRangeList :: Parser Expr
+parseInfRangeList = do char '['
+                       begin <- parseExpr
+                       spaces
+                       char '~'
+                       spaces
+                       _ <- char ']'
+                       return $ LispInfRangeList begin
+
+parseInfRangeList2 :: Parser Expr
+parseInfRangeList2 = do _ <- char '['
+                        begin <- parseExpr
+                        _ <- spaces
+                        begin2 <- parseExpr
+                        _ <- spaces
+                        _ <- char '~'
+                        _ <- spaces
+                        _ <- char ']'
+                        return $ LispInfRangeList2 begin begin2
 
 parseList :: Parser Expr
 parseList = do _ <- char '('

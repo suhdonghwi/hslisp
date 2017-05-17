@@ -13,6 +13,8 @@ data Expr = LispFloat Double |
             LispConsList [Expr] |
             LispRangeList Expr Expr |
             LispRangeList2 Expr Expr Expr |
+            LispInfRangeList Expr |
+            LispInfRangeList2 Expr Expr |
             LispList [Expr] |
             LispError String |
             LispDo [Expr]

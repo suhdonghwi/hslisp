@@ -1,7 +1,15 @@
 # hslisp
 **hslisp** is LISP variant coded in Haskell.
 
-# 1. Syntax
+# 1. Execution
+- Execute with no program argument : run REPL without any task.
+- Execute with arguments : Load files enumerated in program arguments, and run REPL.
+
+For example, `runhaskell main.hs stdlib.hs`, loads stdlib.hs and runs REPL.
+
+Of course, instead of runhaskell, you can compile and run this with Haskell compiler such as ghc.
+
+# 2. Syntax
 
 ### Real number : `[+\-]?\d+\.\d+` 
 - Floating point number literal. Uses `Double` type in Haskell.

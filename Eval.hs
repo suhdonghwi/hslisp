@@ -189,8 +189,7 @@ lispApply ctx args
         where argsNum = length args
 
 specialFuncMap :: Context -> Map String (Context -> [Expr] -> (Context, Expr))
-specialFuncMap ctx = Map.fromList [("if", lispIf), 
-                                   ("define", lispDefine), 
+specialFuncMap ctx = Map.fromList [("define", lispDefine), 
                                    ("lambda", lispLambda),
                                    ("defun", lispDefun),
                                    ("let", lispLet ctx)]
@@ -216,7 +215,8 @@ builtinMap = Map.fromList [("+", LispFunction lispNumAdd),
                            ("length", LispFunction lispListLength),
                            ("quote", LispFunction lispQuote),
                            ("eval", LispFunction lispEval),
-                           ("apply", LispFunction lispApply)]
+                           ("apply", LispFunction lispApply),
+                           ("if", LispFunction lispIf)]
 
 eval :: Context -> Expr -> (Context, Expr)
 eval ctx val@(LispFloat _) = (ctx, val)

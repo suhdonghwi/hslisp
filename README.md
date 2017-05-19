@@ -75,7 +75,7 @@ Of course, instead of runhaskell, you can compile and run this with Haskell comp
 - Example :<br>
 `(defun add (x y) (+ x y))`
 
-## let : `(let (<Symbol> <Expr>)+ <Expr>)`
+### let : `(let (<Symbol> <Expr>)+ <Expr>)`
 - Defines local constants and evalutes last argument, and returns it.
 - Example :<br>
 `(let (a 10) (b 15) (* a b))`

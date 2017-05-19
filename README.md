@@ -5,6 +5,16 @@ hslisp is (partially) lazy-evaluted pure functional programming language.
 
 Note there is no way to perform I/O in this language. Seperating pure computations and impure computations(I/O) appropriately is very complex problem. Think about Monad system in Haskell, and I have no ability to apply that in my language.
 
+# 0. Examples
+
+- Reverse alphabet list<br>
+`(reverse ['a' ~ 'z'])` (reverse function is defined in stdlib.hl) <br>
+→ `['z' 'y' 'x' 'w' 'v' 'u' 't' 's' 'r' 'q' 'p' 'o' 'n' 'm' 'l' 'k' 'j' 'i' 'h' 'g' 'f' 'e' 'd' 'c' 'b' 'a']`
+
+- Solution for [Project Eulter Problem No 1.](https://projecteuler.net/problem=1) <br>
+`(sum (unique (++ [3 6 ~ 999] [5 10 ~ 999])))`<br>
+→ 233168
+
 # 1. Execution
 - Execute with no program argument : run REPL without any task.
 - Execute with arguments : Load files enumerated in program arguments, and run REPL.

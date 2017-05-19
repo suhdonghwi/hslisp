@@ -11,7 +11,7 @@ Note there is no way to perform I/O in this language. Seperating pure computatio
 `(reverse ['a' ~ 'z'])` (reverse function is defined in stdlib.hl) <br>
 → `['z' 'y' 'x' 'w' 'v' 'u' 't' 's' 'r' 'q' 'p' 'o' 'n' 'm' 'l' 'k' 'j' 'i' 'h' 'g' 'f' 'e' 'd' 'c' 'b' 'a']`
 
-- Solution for [Project Eulter Problem No 1.](https://projecteuler.net/problem=1) <br>
+- Solution for [Project Euler Problem No 1.](https://projecteuler.net/problem=1) <br>
 `(sum (unique (++ [3 6 ~ 999] [5 10 ~ 999])))`<br>
 → 233168
 

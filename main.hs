@@ -13,7 +13,7 @@ import ExprTypeCheck
 
 readExpr :: String -> Expr
 readExpr input = case parse parseExprs "hslisp" input of
-    Left err -> LispSymbol $ "\nNo match: " ++ show err
+    Left err -> LispError $ "\nNo match: " ++ show err
     Right val -> val
 
 re :: String -> Context -> (Context, Expr) -- Read, Eval
@@ -36,15 +36,15 @@ repl initCtx = do
 main :: IO()
 main = do args <- getArgs
           case args of
-              [] -> repl Map.empty
+              [] -> repl builtinMap
               filenames -> do
-                        ctxRef <- newIORef Map.empty
+                        ctxRef <- newIORef builtinMap 
                         forM_ filenames $ \filename -> do
                             putStrLn $ "Loading " ++ filename ++ " ..."
                             content <- readFile filename
                             ctx <- readIORef ctxRef
                             let val = re content ctx
-                            when (isErrorExpr $ snd val) ((print $ snd val) >> exitFailure)
+                            when (isErrorExpr $ snd val) (print (snd val) >> exitFailure)
                             writeIORef ctxRef (fst val)
                             putStrLn $ "Successfully loaded " ++ filename ++ "."
                         ctx <- readIORef ctxRef

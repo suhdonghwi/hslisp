@@ -26,9 +26,9 @@ unpackSymbol :: Expr -> String
 unpackSymbol (LispSymbol val) = val
 unpackSymbol _ = error "Expected Symbol type"
 
-unpackConsList :: Expr -> [Expr]
-unpackConsList (LispConsList val) = val
-unpackConsList _ = error "Expected ConsList type"
+unpackDataList :: Expr -> [Expr]
+unpackDataList (LispDataList val) = val
+unpackDataList _ = error "Expected ConsList type"
 
 unpackList :: Expr -> [Expr]
 unpackList (LispList val) = val

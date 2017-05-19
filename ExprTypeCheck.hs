@@ -27,7 +27,7 @@ isSymbolExpr (LispSymbol _) = True
 isSymbolExpr _ = False
 
 isConsListExpr :: Expr -> Bool
-isConsListExpr (LispConsList _) = True
+isConsListExpr (LispDataList _) = True
 isConsListExpr _ = False
 
 isListExpr :: Expr -> Bool

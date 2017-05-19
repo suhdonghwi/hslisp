@@ -32,3 +32,5 @@
                         (if (member? (head lst) (tail lst))
                             (unique (tail lst))
                             (++ [(head lst)] (unique (tail lst))))))
+
+(defun curry (f arg) (lambda (arg2) (f arg arg2)))

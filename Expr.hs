@@ -10,7 +10,7 @@ data Expr = LispFloat Double |
             LispChar Char |
             LispFunction (Context -> [Expr] -> (Context, Expr)) |
             LispSymbol String |
-            LispConsList [Expr] |
+            LispDataList [Expr] |
             LispRangeList Expr Expr |
             LispRangeList2 Expr Expr Expr |
             LispInfRangeList Expr |
@@ -26,7 +26,7 @@ instance Show Expr where
     show (LispChar val) = show val
     show (LispFunction _) = "[function]"
     show (LispSymbol val) = val
-    show (LispConsList val) = "[" ++ unwords (map show val) ++ "]"
+    show (LispDataList val) = "[" ++ unwords (map show val) ++ "]"
     show (LispList val) = "(" ++ unwords (map show val) ++ ")"
     show (LispError val) = "Error : " ++ val
     show _ = "[undefined]"

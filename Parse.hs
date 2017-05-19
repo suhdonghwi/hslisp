@@ -8,7 +8,8 @@ parseExpr :: Parser Expr
 parseExpr = try parseFloat <|>
             try parseInteger <|> 
             try parseBoolean <|> 
-            try parseChar <|> 
+            try parseChar <|>
+            try parseLambda <|>      
             parseQuote <|>
             parseString <|>
             parseSymbol <|> 
@@ -16,7 +17,7 @@ parseExpr = try parseFloat <|>
             try parseRangeList <|>
             try parseRangeList2 <|>
             try parseInfRangeList <|>
-            try parseInfRangeList2 <|>            
+            try parseInfRangeList2 <|>      
             parseList
 
 parseFloat :: Parser Expr
@@ -76,19 +77,19 @@ parseString :: Parser Expr
 parseString = do _ <- char '"'
                  str <- many character
                  _ <- char '"'
-                 return $ LispConsList $ map (LispChar . transEscape) str
+                 return $ LispDataList $ map (LispChar . transEscape) str
 
 parseSymbol :: Parser Expr
 parseSymbol = do first <- firstChar
                  trailing <- many (firstChar <|> digit)
                  return $ LispSymbol (first:trailing)
-                 where firstChar = oneOf "+-*/%=?" <|> letter
+                 where firstChar = oneOf "+-*/%=?><" <|> letter
 
 parseConsList :: Parser Expr
 parseConsList = do _ <- char '['
                    lst <- sepBy parseExpr spaces
                    _ <- char ']'
-                   return $ LispConsList lst
+                   return $ LispDataList lst
 
 parseRangeList :: Parser Expr
 parseRangeList = do char '['
@@ -131,6 +132,14 @@ parseInfRangeList2 = do _ <- char '['
                         _ <- spaces
                         _ <- char ']'
                         return $ LispInfRangeList2 begin begin2
+
+parseLambda :: Parser Expr
+parseLambda = do _ <- oneOf "\\λ"
+                 args <- sepEndBy parseSymbol spaces
+                 _ <- string "."
+                 _ <- spaces
+                 body <- parseExpr
+                 return $ LispList [LispSymbol "lambda", LispList args, body]
 
 parseList :: Parser Expr
 parseList = do _ <- char '('

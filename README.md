@@ -58,3 +58,24 @@ Of course, instead of runhaskell, you can compile and run this with Haskell comp
 - Syntactic sugar for `(lambda (<Symbol>...) <Expr>)`
 
 ### Function Call : `(<Symbol> <Expr>...)`
+- Function Call. Call arguments are not evaluted in this moment.
+
+# 3. Special-formed functions
+
+### define : `(define <Symbol> <Expr>)`
+- Defines constant to global context.
+- Example :<br>
+`(define ten 10)`
+
+### lambda : `(lambda (<Symbol>...) <Expr>)`
+- Returns anonymous function.
+
+### defun : `(defun <Symbol> (<Symbol>...) <Expr>)`
+- Syntactic sugar for `(define <Symbol> (lambda (<Symbol>...) <Expr>))`
+- Example :<br>
+`(defun add (x y) (+ x y))`
+
+## let : `(let (<Symbol> <Expr>)+ <Expr>)`
+- Defines local constants and evalutes last argument, and returns it.
+- Example :<br>
+`(let (a 10) (b 15) (* a b))`

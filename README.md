@@ -1,6 +1,10 @@
 # hslisp
 **hslisp** is LISP variant coded in Haskell.
 
+hslisp is (partially) lazy-evaluted pure functional programming language.
+
+Note there is no way to perform I/O in this language. Seperating pure computations and impure computations(I/O) appropriately is very complex problem. Think about Monad system in Haskell, and I have no ability to apply that in my language.
+
 # 1. Execution
 - Execute with no program argument : run REPL without any task.
 - Execute with arguments : Load files enumerated in program arguments, and run REPL.
@@ -79,3 +83,99 @@ Of course, instead of runhaskell, you can compile and run this with Haskell comp
 - Defines local constants and evalutes last argument, and returns it.
 - Example :<br>
 `(let (a 10) (b 15) (* a b))`
+
+# 4. Built-in normal functions
+
+### + : `(+ <Expr>...)`
+- Returns sum of arguments.
+- Return type is same with type of arguments.
+- Only Integer and Real type are allowed for argument type.
+- Every arguments type must be same.
+
+### - : `(- <Expr> <Expr>)`
+- Returns (First argument) - (Second argument). 
+- Return type is same with type of arguments.
+- Only Integer and Real type are allowed for argument type.
+- Every arguments type must be same.
+
+### \* : `(\* <Expr>...)`
+- Returns product of arguments.
+- Return type is same with type of arguments.
+- Only Integer and Real type are allowed for argument type.
+- Every arguments type must be same.
+
+### / : `(/ <Expr> <Expr>)`
+- Returns (First argument) / (Second argument). 
+- Return type is same with type of arguments.
+- Only Integer and Real type are allowed for argument type.
+- Every arguments type must be same.
+
+### % : `(% <Expr> <Expr>)`
+- Returns (First argument) % (Second argument). (modulo)
+- Return type is same with type of arguments.
+- Only Integer and Real type are allowed for argument type.
+- Every arguments type must be same.
+
+### = : `(= <Expr>...)`
+- Returns `true`(boolean) if all the arguments are same, otherwise `false`.
+- Only Integer, Real and Boolean type are allowed for argument type.
+- Every arguments type must be same.
+
+### /= : `(= <Expr>...)`
+- Returns `false`(boolean) if all the arguments are same, otherwise `true`.
+- Only Integer, Real and Boolean type are allowed for argument type.
+- Every arguments type must be same.
+
+### > : `(> <Expr> <Expr>)`
+- Returns `true`(boolean) if (First argument) is greater than (Second argument), otherwise `false`.
+- Only Integer and Real type are allowed for argument type.
+- Every arguments type must be same.
+
+### >= : `(>= <Expr> <Expr>)`
+- Returns `true`(boolean) if (First argument) is greater than or equal to (Second argument), otherwise `false`.
+- Only Integer and Real type are allowed for argument type.
+- Every arguments type must be same.
+
+### < : `(< <Expr> <Expr>)`
+- Returns `false`(boolean) if (First argument) is greater than (Second argument), otherwise `true`.
+- Only Integer and Real type are allowed for argument type.
+- Every arguments type must be same.
+
+### <= : `(<= <Expr> <Expr>)`
+- Returns `false`(boolean) if (First argument) is greater than or equal to (Second argument), otherwise `true`.
+- Only Integer and Real type are allowed for argument type.
+- Every arguments type must be same.
+
+### and : `(and <Expr>...)`
+- Returns true(boolean) if all the arguments are `true`, other wise `false`.
+- Only Boolean type is allowed for argument type.
+
+### or : `(and <Expr>...)`
+- Returns true(boolean) if one of the arguments is `true`, otherwise `false`.
+- Only Boolean type is allowed for argument type.
+
+### if : `(if <Expr> <Expr> <Expr>)`
+- Returns (Second argument) if (First Argument) is true, otherwise (Third argument).
+- Type of (First Argument) must be boolean.
+
+### head : `(head <Expr>)`
+- Returns first element of data list(First Argument).
+- Only first element of list is evaluted, so `(head [1 ~ ])` returns 1 without any overhead.
+
+### tail : `(tail <Expr>)`
+- Returns tail(List except first element) of data list(First Argument).
+
+### ++ : `(++ <Expr> <Expr>)`
+- Returns list concatenated (First Argument) and (Second Argument), where both are data list.
+
+### length : `(length <Expr>)`
+- Returns length of (First Argument, data list).
+
+### quote : `(quote <Expr>)`
+- Nothing is evaluted, and returns first argument.
+
+### eval : `(eval <Expr>)`
+- Evalutes quoted expression (First Argument), and returns it.
+
+### apply : `(apply <Expr> <Expr>)`
+- Feeds data list (Second Argument) elements as argument to function (First Argument).

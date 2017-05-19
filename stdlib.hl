@@ -9,7 +9,9 @@
                             (f (head lst) (foldr f v (tail lst)))
                        ))
 
-(defun reverse (lst) (foldr (lambda (head tail) (++ tail [head])) [] lst))
+(defun reverse (lst) (if (empty? lst)
+                         []
+                         (++ (reverse (tail lst)) [(head lst)])))
 
 (defun sum (lst) (if (empty? lst)
                      0

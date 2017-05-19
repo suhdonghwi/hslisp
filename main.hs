@@ -3,6 +3,7 @@ import Data.IORef
 import qualified Data.Map as Map
 import System.Exit
 import System.Environment
+import System.IO
 
 import Text.Parsec
 
@@ -24,6 +25,7 @@ repl initCtx = do
             ctxRef <- newIORef initCtx
             let loop = do
                 putStr "λ> "
+                hFlush stdout
                 line <- getLine
                 when (line == "quit") exitSuccess
                 ctx <- readIORef ctxRef
